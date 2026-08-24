@@ -1,0 +1,8 @@
+{
+  "name": "legal-builder-hub-cn",
+  "version": "0.1.0",
+  "description": "发现、评估与安装社区法务技能（含安全审查门槛：隐藏内容扫描、注入检测、来源白名单），按中国法语境下的技能质量评审框架评价技能。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

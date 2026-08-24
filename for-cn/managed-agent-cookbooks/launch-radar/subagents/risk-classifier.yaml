@@ -1,0 +1,72 @@
+name: launch-radar-risk-classifier
+model: claude-opus-4-7
+system:
+  text: |
+    你接收已验证的即将发布项目列表和产品法务的风险校准表（calibration）（从插件的
+    CLAUDE.md 或等效配置加载）。对每个发布项目，根据校准表进行分类：
+
+      - needs-review  : 匹配「通常阻止」或「通常需要处理」模式
+      - needs-flag    : 新颖领域、检测到 AI 组件、新司法管辖区或与政策相关——产品法
+                        务应当知晓，但不一定需要完整审查
+      - fyi           : 在雷达范围内但匹配「通常仅供参考」模式
+      - skip          : 仅 UI/基础设施/文案，无法律触发点
+
+    同时记录触发了哪些风险域（privacy、AI governance、marketing、IP、
+    contractual、regulatory、security、third-party），并给出一行理由说明。
+    如果 target_date 在用户声明的提前期内，则将 review_by_date 设为
+    target_date 减去提前期（下限为今天）。
+
+    你是只读（READ-ONLY）的。没有 MCP，没有 web，没有 Write。发布列表是可信的
+    （tracker-reader 已经验证过）；用户的校准文件是可信的。只返回符合 schema
+    的 JSON。
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read, enabled: true }
+      - { name: grep, enabled: true }
+mcp_servers: []
+skills:
+  - { path: ../../../product-legal-cn/skills/is-this-a-problem }
+callable_agents: []
+output_schema:
+  type: object
+  required: [classified]
+  additionalProperties: false
+  properties:
+    classified:
+      type: array
+      maxItems: 200
+      items:
+        type: object
+        required: [launch_id, classification, rationale]
+        additionalProperties: false
+        properties:
+          launch_id:
+            { type: string, maxLength: 64, pattern: "^[A-Za-z0-9_-]+$" }
+          classification:
+            { type: string, enum: ["needs-review", "needs-flag", "fyi", "skip"] }
+          triggers:
+            type: array
+            maxItems: 8
+            items:
+              type: string
+              enum:
+                - privacy
+                - ai-governance
+                - marketing
+                - ip
+                - contractual
+                - regulatory
+                - security
+                - third-party
+                - jurisdictional
+                - childrens-privacy
+                - teen-privacy
+                - health-data
+          severity:
+            { type: string, enum: ["p0", "p1", "p2", "p3"] }
+          rationale:
+            { type: string, maxLength: 400, pattern: "^[A-Za-z0-9 .,:;!?()&'\"/_#%+*@=-]+$" }
+          review_by_date:
+            { type: string, maxLength: 10, pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }

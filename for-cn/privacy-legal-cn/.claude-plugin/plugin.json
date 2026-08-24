@@ -1,0 +1,8 @@
+{
+  "name": "privacy-legal-cn",
+  "version": "0.1.0",
+  "description": "对照个人信息保护法、数据安全法、网络安全法评估处理活动，生成个人信息保护影响评估（PIIA），审查委托处理协议，判定数据出境合规路径，起草个人权利请求答复，追踪隐私政策与实际实践的偏离。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

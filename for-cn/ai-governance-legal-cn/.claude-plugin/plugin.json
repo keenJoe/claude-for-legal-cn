@@ -1,0 +1,8 @@
+{
+  "name": "ai-governance-legal-cn",
+  "version": "0.1.0",
+  "description": "按《生成式人工智能服务管理暂行办法》、算法备案与深度合成规定评估 AI 用例，生成合规影响评估报告，审查 AI 供应商条款（数据训练、责任分配），保持 AI 制度与监管动态同步。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

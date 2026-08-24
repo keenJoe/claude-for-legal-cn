@@ -1,0 +1,5 @@
+[
+  { "event": "对照 schema ma-diligence 审查文件夹 /02-合同", "description": "网格模式 —— 用 M&A 尽调标准列集扫描重大合同文件夹，产出表格审查 CSV + 摘要" },
+  { "event": "监控数据室 2026-05-01 以来的新上传，标记重大合同与知识产权", "description": "监控模式 —— 列出截止日以来每份新文档，对照请求清单类目分类，标记高优先级项，写更新报告" },
+  { "event": "对文档 [DOC-001, DOC-002, DOC-003] 重跑网格，新增列 termination_for_convenience", "description": "网格模式 —— schema 编辑 + 针对文档子集的定向重跑，保留未改动文档的既有行" }
+]

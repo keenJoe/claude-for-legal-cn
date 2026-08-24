@@ -1,0 +1,75 @@
+name: renewal-deadline-calculator
+model: claude-opus-4-7
+system:
+  text: |
+    你从 repo-reader 接收经过校验的合同列表。你执行纯计算：对每一份合同，
+    计算距离截止日的天数（`cancel_by_date` 或 `expiration_date` 中较早的
+    那个减去今天），对紧急程度进行分档，并与部署方团队的 renewal-tracker
+    配置进行交叉比对 —— 包括前瞻窗口期、针对续约定价和自动续约上限的
+    playbook 立场，以及升级矩阵（escalation matrix）。
+
+    将每份合同精确地归入一个 urgency 分档：
+      - `overdue`       — 截止日已过
+      - `next_30_days`  — 距今 1 到 30 天
+      - `30_to_60_days` — 距今 31 到 60 天
+      - `60_to_90_days` — 距今 61 到 90 天
+      - `90_to_180_days`— 距今 91 到 180 天
+      - `outside_window`— 超出所配置的前瞻窗口期（从输出中排除）
+
+    对每一条告警，判断是否存在任何部署方团队的 playbook 偏离项（无上限的
+    续约价格递增条款、过短的通知窗口期、通知机制与团队标准不一致等等），
+    以及升级矩阵是否要求路由给某位具名审批人。
+
+    你是纯计算。你没有 MCP、没有 web、没有 Write。你读取交给你的结构化
+    JSON 以及磁盘上的 playbook 配置文件。只返回符合 schema 的 JSON。
+
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read, enabled: true }
+      - { name: grep, enabled: true }
+      - { name: glob, enabled: true }
+
+mcp_servers: []
+skills: []
+callable_agents: []
+
+output_schema:
+  type: object
+  required: [as_of, alerts]
+  additionalProperties: false
+  properties:
+    as_of: { type: string, maxLength: 10, pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }
+    alerts:
+      type: array
+      maxItems: 500
+      items:
+        type: object
+        additionalProperties: false
+        required: [contract_id, deadline_type, deadline_date, days_remaining, urgency]
+        properties:
+          contract_id:    { type: string, maxLength: 64, pattern: "^[A-Za-z0-9 ._/:-]+$" }
+          counterparty:   { type: string, maxLength: 200, pattern: "^[A-Za-z0-9 .,&'()_/-]+$" }
+          deadline_type:  { type: string, maxLength: 24,  pattern: "^(cancel_by|expiration|notice_window)$" }
+          deadline_date:  { type: string, maxLength: 10,  pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }
+          days_remaining: { type: integer, minimum: -3650, maximum: 3650 }
+          urgency:        { type: string, maxLength: 24,  pattern: "^(overdue|next_30_days|30_to_60_days|60_to_90_days|90_to_180_days)$" }
+          recommended_action:
+            type: string
+            maxLength: 300
+          escalation_needed: { type: boolean }
+          escalation_to:
+            type: string
+            maxLength: 120
+          playbook_deviations:
+            type: array
+            maxItems: 20
+            items:
+              type: object
+              additionalProperties: false
+              required: [clause, position]
+              properties:
+                clause:   { type: string, maxLength: 64,  pattern: "^[A-Za-z0-9_ -]+$" }
+                position: { type: string, maxLength: 300 }
+                severity: { type: string, maxLength: 16,  pattern: "^(minor|moderate|critical)$" }

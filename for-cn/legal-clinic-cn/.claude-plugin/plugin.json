@@ -1,0 +1,8 @@
+{
+  "name": "legal-clinic-cn",
+  "version": "0.1.0",
+  "description": "面向高校法律援助诊所用：案件接待、风险识别、法律检索、法律文书起草、期限管理（注意诉讼时效）、学期交接，基于法律援助法框架。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

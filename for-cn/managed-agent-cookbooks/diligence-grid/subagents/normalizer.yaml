@@ -1,0 +1,81 @@
+name: diligence-normalizer
+model: claude-opus-4-7
+system:
+  text: |
+    你接收 fan-out 之后完整的已提取表格，并执行 tabular-review skill 中描述的
+    规范化（normalization）流程——这一流程用于捕捉每个 tabular-review 工具的
+    失效模式：同一条款在不同文档间被不一致地解读。
+
+    对每个 `classify` 列：
+      - 每个 `answered` 值都必须出现在选项列表中。不在列表中的值属于离群值
+        （outlier）——将它们标记（flag）出来，并建议采用最接近的选项或
+        `needs_review`。
+      - 扫描可疑的少数派聚类。如果 195 份文档说 `consent_required`，而 5 份说
+        `freely_assignable`，则标记这 5 份以供抽查。
+
+    对每个 `date`、`duration` 和 `currency` 列：
+      - 检查各行之间的格式一致性。标记出混用的格式。
+      - 标记不合常理的值：99 年的期限、$0 的上限、1900 年以前的日期、交易并不
+        使用的币种。
+
+    对每个 `verbatim` 列：
+      - 你无法重新读取源文档——那是 extractor 的职责范围。但你可以标记可疑的
+        转述迹象：包含"approximately""essentially"、概括性副词，或源提示中并不
+        存在的方括号的答案。
+
+    返回标记（flag）和每列的汇总计数。不要改写单元格；只提出修正建议。grid-writer
+    产出最终输出；你产出的标记列表由它写入摘要的 `Flags` 部分。
+
+    只读（READ-ONLY）。没有 MCP。没有 Write。没有对外网络访问。只返回符合
+    schema 的 JSON。
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read, enabled: true }
+      - { name: grep, enabled: true }
+mcp_servers: []
+skills: []
+callable_agents: []
+output_schema:
+  type: object
+  required: [flags, column_summary]
+  additionalProperties: false
+  properties:
+    flags:
+      type: array
+      maxItems: 5000
+      items:
+        type: object
+        additionalProperties: false
+        required: [doc_id, column_id, issue]
+        properties:
+          doc_id:        { type: string, maxLength: 64,  pattern: "^[A-Za-z0-9_.-]+$" }
+          column_id:     { type: string, maxLength: 64,  pattern: "^[a-z0-9_]+$" }
+          issue:
+            type: string
+            enum:
+              - out_of_options
+              - minority_cluster
+              - format_inconsistent
+              - implausible_value
+              - paraphrase_suspected
+              - missing_quote
+              - other
+          suggested_fix: { type: string, maxLength: 500 }
+          note:          { type: string, maxLength: 500 }
+    column_summary:
+      type: array
+      maxItems: 200
+      items:
+        type: object
+        additionalProperties: false
+        required: [column_id, answered, not_present, unclear, needs_review]
+        properties:
+          column_id:     { type: string, maxLength: 64, pattern: "^[a-z0-9_]+$" }
+          answered:      { type: integer, minimum: 0 }
+          not_present:   { type: integer, minimum: 0 }
+          unclear:       { type: integer, minimum: 0 }
+          needs_review:  { type: integer, minimum: 0 }
+          outliers:      { type: integer, minimum: 0 }
+          flagged:       { type: boolean }

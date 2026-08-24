@@ -1,0 +1,8 @@
+{
+  "name": "regulatory-legal-cn",
+  "version": "0.1.0",
+  "description": "监控中国监管动态（国家法律法规数据库、网信办、市监总局、工信部、最高法），对比新规与企业制度库差异，跟踪征求意见稿期限与整改缺口，输出周一晨读摘要。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

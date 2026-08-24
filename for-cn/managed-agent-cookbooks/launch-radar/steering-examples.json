@@ -1,0 +1,5 @@
+[
+  { "event": "扫描追踪列表中未来 6 周的发布", "description": "每周雷达 —— 默认时间窗，全部产品面" },
+  { "event": "分流：新的 Agent 自主功能（PROJ-1234），这是个问题吗？", "description": "单 ticket 对照校准表分流 —— 端到端跑一遍 is-this-a-problem 路径" },
+  { "event": "路线图重排后重新扫描，时间窗：4 周", "description": "规划会打乱发布日期后的计划外刷新" }
+]

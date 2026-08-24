@@ -1,0 +1,8 @@
+{
+  "name": "commercial-legal-cn",
+  "version": "0.1.0",
+  "description": "按采购方或供应方立场审查供应商协议、保密协议、SaaS 订阅合同，对照民法典合同编与个人信息保护法的委托处理要求，识别违约金过高风险与格式条款效力问题，追踪续约与解除通知期限。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

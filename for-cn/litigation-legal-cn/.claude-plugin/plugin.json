@@ -1,0 +1,8 @@
+{
+  "name": "litigation-legal-cn",
+  "version": "0.1.0",
+  "description": "按民事诉讼法管理诉讼案件组合（案件、期限、保全、证据、律师函），起草民事起诉状/答辩状、证据清单、质证意见与代理词，准备证人出庭与法庭辩论提纲，追踪举证期限与开庭日期。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}

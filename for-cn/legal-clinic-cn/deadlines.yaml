@@ -1,0 +1,37 @@
+# 诊所期限台账 —— legal-clinic-cn
+#
+# 由 /legal-clinic-cn:deadlines --add 写入（或在 /client-intake、/draft、/status 冒出期限时提取导入）。
+# /legal-clinic-cn:deadlines --report 读它做跨案汇总。
+#
+# 诊所工作漏期限 = 指导老师的执业风险。把本文件当作作业记录。
+# 特别关注：诉讼时效 3 年（民法典第 188 条）、仲裁时效 1 年（劳动争议调解仲裁法第 27 条）、
+# 上诉期 15 日 / 裁定 10 日（民事诉讼法第 171 条 [待核验条文号]）、
+# 申请执行 2 年（民事诉讼法第 246 条 [待核验条文号]）。
+#
+# ──────────────────────────────────────────────────────────────────────────
+# 结构
+# ──────────────────────────────────────────────────────────────────────────
+# - id:             string（slug：[案件]-[短说明]-[YYYY-MM]）
+#   case_id:        string —— 引用接待系统 / 诊所台账
+#   case_name:      string —— 人类可读的案件名
+#   practice_area:  labor | family | traffic-injury | private-lending | tenancy |
+#                   property-management | consumer | criminal-aid | other
+#   type:           filing | hearing | statute-of-limitations | arbitration-limitation |
+#                   answer | evidence | appeal | service | notice | enforcement | other
+#   description:    string —— 一行到期什么
+#   due_date:       YYYY-MM-DD
+#   time:           HH:MM（可选；开庭 / 立案时点）
+#   timezone:       string（可选；默认从 CLAUDE.md 办案地）
+#   source:         string —— 期限来源（法院传票、仲裁委立案通知、法条例如「劳动争议调解仲裁法第 27 条」）
+#   owner_student:  string —— 责任学生
+#   owner_teacher:  string —— 指导老师（一般从 CLAUDE.md）
+#   owner_lawyer:   string —— 出庭代理律师（涉法院/仲裁委提交时；学生不代理出庭）
+#   status:         upcoming | today | overdue | completed | closed
+#   completed_date: YYYY-MM-DD | null
+#   notes:          string | null
+#   warnings:       list —— 例如 [no-plausibility-band] 表示区间文件缺失时的软标记
+#   created:        YYYY-MM-DD
+#   created_by:     string —— 记入学生
+# ──────────────────────────────────────────────────────────────────────────
+
+deadlines: []

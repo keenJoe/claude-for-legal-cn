@@ -1,0 +1,8 @@
+{
+  "name": "ip-legal-cn",
+  "version": "0.1.0",
+  "description": "按商标法、专利法、著作权法开展商标初审排查（注册近似、驰名）、侵权警告函与律师函起草、投诉/应诉分流、开源合规检查、IP 条款审查与登记续展期限追踪。",
+  "author": {
+    "name": "Legal & Compliance"
+  }
+}
